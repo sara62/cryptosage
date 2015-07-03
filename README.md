@@ -1,4 +1,4 @@
-# CryptoSage
+### About
 
 CryptoSage provides cryptography algorithms in SageMath (http://www.sagemath.org).
 
