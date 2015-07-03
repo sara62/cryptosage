@@ -6,6 +6,13 @@ This project is for students and engineers interested in cryptography.
 You can try and test these cryptography algorithms with real parameters and full key lengths.
 We write cryptography algorithms in SageMath.
 
+### Install
+
+At first you need to install SageMath.
+And then the `sage` command can load and run the CryptoSage scripts.
+
+### Features
+
 We hope to implement all popular public key schemes:
 
 * Integer-Factoring-Based Cryptosystems including RSA/Rabin/Paillier, etc. 
