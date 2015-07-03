@@ -1,6 +1,6 @@
 # CryptoSage
 
-Cryptography Implementation in SageMath (http://www.sagemath.org).
+CryptoSage provides cryptography algorithms in SageMath (http://www.sagemath.org).
 
 This project is for students and engineers interested in cryptography.
 You can try and test these cryptography algorithms with real parameters and full key lengths.
