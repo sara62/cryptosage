@@ -34,7 +34,7 @@ def point2str(R, l):
 	rstr = rxstr + rystr
 	return rstr
 
-def ecies_encrypt(Q, m, n, h, P):
+def ecies_encrypt(Q, m, P):
 	k = randint(1, n - 1)
 	R = k * P
 	Z = h * k * Q
@@ -56,7 +56,7 @@ def ecies_encrypt(Q, m, n, h, P):
 	return [R, C, t]
 
 
-def ecies_decrypt(R, C, t, d, h, n):
+def ecies_decrypt(R, C, t, d):
 	Z = h * d * R
 	l = ceil(math.log(n, 2)/8)
 	(zx, zy) = Z.xy()

@@ -1,18 +1,20 @@
+load('prime192v1.sage')
+
 # ECMQV
 # A's key pair
 da = randint(1, n - 1)
-Qa = da * G
+Qa = da * P
 # B's key pair
 db = randint(1, n - 1)
-Qb = db * G
+Qb = db * P
 
 # A:
 ka = randint(1, n - 1)
-Ra = ka * G
+Ra = ka * P
 #send A, Ra to B
 #B
 kb = randint(1, n - 1)
-Rb = kb * G
+Rb = kb * P
 sb = Integer(kb) + point_hat(Rb) * Integer(db)
 
 Ra_hat = point_hat(Ra)

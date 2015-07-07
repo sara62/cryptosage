@@ -1,4 +1,4 @@
-def psec_encrypt(Q, m, n, P):
+def psec_encrypt(Q, m, P):
 	r = randint(1, n - 1)
 	l = ceil(math.log(n, 2)/8)
 	rstr = I2OSP(r, l)
@@ -24,7 +24,7 @@ def psec_encrypt(Q, m, n, P):
 	print t
 	return [R, C, s, t]
 
-def psec_decrypt(R, C, s, t, d, n, P):
+def psec_decrypt(R, C, s, t, d, P):
 	Z = d * R
 	l = ceil(math.log(n, 2)/8)
 	Rstr = point2str(R, l)

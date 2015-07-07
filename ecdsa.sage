@@ -21,8 +21,8 @@ def ecdsa_sign(d, m):
 			k = randint(1, n - 1)
 			kP = k * P
 			(x, y) = kP.xy()
-			r = Zn(x)
-		s = Zn(k)^-1 * (e + d * r)
+			r = Fn(x)
+		s = Fn(k)^-1 * (e + d * r)
 
 	return (r, s)
 
@@ -53,7 +53,7 @@ def ecdsa_verify(Q, m, sig):
 	if X == 0:
 		return False
 	(x, y) = X.xy()
-	v = Zn(x)
+	v = Fn(x)
 
 	return v == r
 

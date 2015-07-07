@@ -1,4 +1,4 @@
-def eckcdsa_sign(P, n, d, m, hcert):
+def eckcdsa_sign(P, d, m, hcert):
 	s = 0
 	r = 0
 	while s == 0:

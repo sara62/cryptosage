@@ -1,11 +1,13 @@
+load('prime192v1.sage')
+
 #Station-to-Station
 # A:
 ka = randint(1, n - 1)
-Ra = ka * G
+Ra = ka * P
 #send A, Ra to B
 #B
 kb = randint(1, n - 1)
-Rb = kb * G
+Rb = kb * P
 Z = h * kb * Ra
 (zx, zy) = Z.xy()
 l = ceil(math.log(n, 2)/8)
