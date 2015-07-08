@@ -3,17 +3,18 @@ load('cryptosage/prime192v1.sage')
 load('cryptosage/digest.sage')
 load('cryptosage/mathhelper.sage')
 load('cryptosage/eckeygen.sage')
-load('cryptosage/ecdsa.sage')
+load('cryptosage/psec.sage')
 
 (Q, d) = ec_keygen()
 #pk: Q, sk:d
 m = 'hello'
 
-[r, s] = ecdsa_sign(d, m)
-result = ecdsa_verify(Q, m, r, s)
-
 print "EC Public Key       : ", Q.xy()
 print "EC Private Key      : ", d
-print "Signed Message      : ", m
-print "ECDSA Signature     : ", r
-print "Verification Result : ", result
+
+#PSEC
+[R, C, s, t] = psec_encrypt(Q, m)
+print "PlainText is        : ", m
+print "encrypt details: ", C
+ans = psec_decrypt(R, C, s, t, d)
+print "Decrypt Result is   : ", ans

@@ -1,3 +1,6 @@
+#!/usr/bin/env sage -python
+load('cryptosage/prime192v1.sage')
+
 # load('<curve_name>.sage')
 
 # Algorithm 4.24 Elliptic curve key pair generation
@@ -11,6 +14,7 @@
 #		public key point Q on curve E
 #		private key d in [1, n-1]
 #
+
 def ec_keygen():
 	print "keygen"
 	d = randint(1, n - 1)

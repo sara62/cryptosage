@@ -25,7 +25,7 @@ def psec_encrypt(Q, m):
 	addstr = KDF(rstr, l, zstr)
 	num = int(addstr, 16)
 	r = int(r)
-	s = r ^ num
+	s = xor(r, num)
 	aesobj = AES.new(k1)
 	C = aesobj.encrypt(pad(m))
 	print C
@@ -55,7 +55,7 @@ def psec_decrypt(R, C, s, t, d):
 	addstr = KDF(Rstr, l, Zstr)
 	num = int(addstr, 16)
 	s = int(s)
-	r = s ^ num
+	r = xor(s, num)
 	rstr = I2OSP(r, l)
 	str = KDF(rstr, 48, '')
 	kstr = str[0:32]

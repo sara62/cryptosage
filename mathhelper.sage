@@ -6,6 +6,16 @@ import hmac
 import math
 from binascii import a2b_hex, b2a_hex
 
+def point2str(R, l):
+	(rx, ry) = R.xy()
+	rxstr = I2OSP(rx, l)
+	rystr = I2OSP(ry, l)
+	rstr = rxstr + rystr
+	return rstr
+
+def xor(a, b):
+	return ((a|b)-(a&b))
+
 def pad(s):
     return s + b"\0" * (AES.block_size - len(s) % AES.block_size)
 

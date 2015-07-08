@@ -35,7 +35,3 @@ You can view and try the `ectest.sage`
 $ sage ectest.sage
 ```
 
-### References
-
-1. Handbook of Applied Cryptography, by Alfred Menzeses, Paul van Oorschot, and Scott Vanstone.
-2. Guide to Elliptic Curve Cryptography, by Darrel Hankerson, Alfred Menezes, and Scott Vanstone.

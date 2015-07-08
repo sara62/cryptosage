@@ -1,10 +1,26 @@
+#!/usr/bin/env sage -python
+
+load('cryptosage/prime192v1.sage')
+load('cryptosage/digest.sage')
+load('cryptosage/mathhelper.sage')
 # ECMQV
+
 # A's key pair
 da = randint(1, n - 1)
 Qa = da * P
 # B's key pair
 db = randint(1, n - 1)
 Qb = db * P
+
+ka = 0
+Rastr = ''
+Rbstr = ''
+k1 = ''
+
+Ra = A_step1()
+[Rb, tb] = B_step1(Ra)
+ta = A_step2(Rb, tb)
+B_step2(ta)
 
 def A_step1():
 	ka = randint(1, n - 1)

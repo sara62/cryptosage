@@ -1,9 +1,10 @@
 #Station-to-Station
+load('cryptosage/prime192v1.sage')
 
 def A_step1():
 	ka = randint(1, n - 1)
 	Ra = ka * P
-	return Ra
+	return [Ra, ka]
 
 def B_step1(Ra):
 	kb = randint(1, n - 1)
@@ -21,9 +22,9 @@ def B_step1(Ra):
 	hmacobj = hmac.new(k1)
 	hmacobj.update(Rbstr + Rastr)
 	tb = hmacobj.digest()
-	return [Rb, sb, tb]
+	return [Rb, sb, tb, Rbstr, Rastr, k1]
 
-def A_step2(Rb, sb, tb):
+def A_step2(Rb, sb, tb, ka, Rbstr, Rastr, k1):
 	Z = h * ka * Rb
 	(zx, zy) = Z.xy()
 	l = ceil(math.log(n, 2)/8)
@@ -51,7 +52,7 @@ def A_step2(Rb, sb, tb):
 	ta = hmacobj.digest()
 	return [sa, ta]
 
-def B_step2(sa, ta):
+def B_step2(sa, ta, Rbstr, Rastr, k1):
 	sab = digest(Rastr + Rbstr)
 	print sab
 	if sab != sa:

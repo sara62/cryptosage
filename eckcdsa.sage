@@ -8,6 +8,7 @@
 #   hashed certification data hcert
 # Output:
 #	signature (r, s) where r, s in Zn
+load('cryptosage/prime192v1.sage')
 
 
 def eckcdsa_sign(d, m, hcert):
@@ -19,7 +20,7 @@ def eckcdsa_sign(d, m, hcert):
 		(x1, y1) = Q.xy()
 		r = digest(x1)
 		e = digest(hcert + m)
-		w = r ^ e
+		w = xor(r, e)
 		wt = Integer(w)
 		if wt >= n:
 			wt = wt - n
@@ -38,7 +39,7 @@ def eckcdsa_sign(d, m, hcert):
 #	Acceptance or rejection of the signature.
 def eckcdsa_verify(Q, m, r, s, hcert):
 	e = digest(hcert + m)
-	w = r ^ e
+	w = xor(r, e)
 	wt = Integer(w)
 	if wt >= n:
 		wt = wt - n
