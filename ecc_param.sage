@@ -1,6 +1,8 @@
 #!/usr/bin/env sage -python
 
-import math
+load('cryptosage/prime192v1.sage')
+load('cryptosage/digest.sage')
+load('cryptosage/mathhelper.sage')
 
 def ecc_curve_gen(p, l):
 	t = math.ceil(math.log(p, 2))
