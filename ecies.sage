@@ -1,40 +1,14 @@
-import sys
-import hashlib
-from Crypto.Cipher import AES
-from sage.all import *
-import hmac
-import math
-from binascii import a2b_hex, b2a_hex
-
-def pad(s):
-    return s + b"\0" * (AES.block_size - len(s) % AES.block_size)
-
-def KDF(x, l, certi):
-	assert l >= 0, 'l should be positive integer'
-	k = l / float(20)
-	k = int(ceil(k))
-
-	l_str = ''
-	for i in range(0, k):
-		l_str = l_str + hashlib.sha1(x + I2OSP(i, 4) + certi).hexdigest()
-
-	return l_str[:l * 2]
-
-
-def I2OSP(longint, length):
-	hex_string = '%X' % longint
-	if len(hex_string) > 2 * length:
-		raise ValueError('integer %i too large to encode in %i octets' % ( longint, length ))
-	return a2b_hex(hex_string.zfill(2 * length))
-
-def point2str(R, l):
-	(rx, ry) = R.xy()
-	rxstr = I2OSP(rx, l)
-	rystr = I2OSP(ry, l)
-	rstr = rxstr + rystr
-	return rstr
-
-def ecies_encrypt(Q, m, P):
+# Algorithm 4.42 ECIES encryption
+# Require:
+#	generator point P of elliptic curve E
+#	order n of P and the field Zn defined by n
+# Input:
+#	message m
+#	public key Q
+# Output:
+#	Ciphertext (R,C,t).
+#
+def ecies_encrypt(Q, m):
 	k = randint(1, n - 1)
 	R = k * P
 	Z = h * k * Q
@@ -55,6 +29,16 @@ def ecies_encrypt(Q, m, P):
 	print t
 	return [R, C, t]
 
+# Algorithm 4.43 ECIES decryption
+# Require:
+#	generator point P of elliptic curve E
+#	order n of P and the field Zn defined by n
+# Input:
+#	private key d
+#	ciphertext (R,C,t)
+# Output:
+#	Plaintext m or rejection of the ciphertext.
+#
 
 def ecies_decrypt(R, C, t, d):
 	Z = h * d * R

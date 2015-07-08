@@ -14,17 +14,17 @@
 def ecdsa_sign(d, m):
 	r = 0
 	s = 0
-	e = digest(m)
-
 	while s == 0:
+		k = 1
 		while r == 0:
 			k = randint(1, n - 1)
-			kP = k * P
-			(x, y) = kP.xy()
-			r = Fn(x)
-		s = Fn(k)^-1 * (e + d * r)
-
-	return (r, s)
+			Q = k * P
+			(x1, y1) = Q.xy()
+			r = Fn(x1)
+		kk = Fn(k)
+		e = digest(m)
+		s = kk ^ (-1) * (e + d * r)
+	return [r, s]
 
 # Algorithm 4.30 ECDSA signature verification
 # Require:
@@ -37,23 +37,15 @@ def ecdsa_sign(d, m):
 # Output:
 #	True or False
 #
-def ecdsa_verify(Q, m, sig):
-	r = sig[0]
-	if r == 0:
-		return False
-	s = sig[1]
-	if s == 0:
-		return False
+def ecdsa_verify(Q, m, r, s):
 	e = digest(m)
-
-	w = s^(-1)
-	u1 = e * w
-	u2 = r * w
-	X = Integer(u1) * P + Integer(u2) * Q
-	if X == 0:
-		return False
+	w = s ^ (-1)
+	u1 = (e * w)
+	u2 = (r * w)
+	P1 = Integer(u1) * P
+	P2 = Integer(u2) * Q
+	X = P1 + P2
 	(x, y) = X.xy()
 	v = Fn(x)
-
 	return v == r
 

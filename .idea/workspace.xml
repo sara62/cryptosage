@@ -1,17 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="4c8d6db5-7dc5-43b6-871c-b4a08be63b0a" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ECMQV.sage" afterPath="$PROJECT_DIR$/ECMQV.sage" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/STS.sage" afterPath="$PROJECT_DIR$/STS.sage" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ecdsa.sage" afterPath="$PROJECT_DIR$/ecdsa.sage" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ecies.sage" afterPath="$PROJECT_DIR$/ecies.sage" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/eckcdsa.sage" afterPath="$PROJECT_DIR$/eckcdsa.sage" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ectest.sage" afterPath="$PROJECT_DIR$/ectest.sage" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/prime192v1.sage" afterPath="$PROJECT_DIR$/prime192v1.sage" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/psec.sage" afterPath="$PROJECT_DIR$/psec.sage" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-    </list>
+    <list default="true" id="4c8d6db5-7dc5-43b6-871c-b4a08be63b0a" name="Default" comment="" />
     <ignored path="cryptosage.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -36,8 +26,8 @@
       <file leaf-file-name="ectest.sage" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/ectest.sage">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="880">
-              <caret line="0" column="14" selection-start-line="0" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.37099496" vertical-offset="40" max-vertical-offset="880">
+              <caret line="13" column="0" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -468,8 +458,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ectest.sage">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="880">
-          <caret line="0" column="14" selection-start-line="0" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.37099496" vertical-offset="40" max-vertical-offset="880">
+          <caret line="13" column="0" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
           <folding />
         </state>
       </provider>

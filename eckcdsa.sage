@@ -1,4 +1,16 @@
-def eckcdsa_sign(P, d, m, hcert):
+# Algorithm 4.36 EC-KCDSA signature generation
+# Require:
+#	generator point P of elliptic curve E
+#	order n of P and the field Zn defined by n
+# Input:
+#	message m
+#	private key d in [1, n - 1]
+#   hashed certification data hcert
+# Output:
+#	signature (r, s) where r, s in Zn
+
+
+def eckcdsa_sign(d, m, hcert):
 	s = 0
 	r = 0
 	while s == 0:
@@ -14,8 +26,17 @@ def eckcdsa_sign(P, d, m, hcert):
 		s = Fn(d * (k - wt))
 	return [r, s]
 
-
-def eckcdsa_verify(P, Q, m, r, s, hcert):
+# Algorithm 4.37 EC-KCDSA signature verification
+# Require:
+#	generator point P of elliptic curve E
+#	order n of P and the field Zn defined by n
+# Input:
+#	message m
+#	public key Q
+#   hashed certification data hcert
+# Output:
+#	Acceptance or rejection of the signature.
+def eckcdsa_verify(Q, m, r, s, hcert):
 	e = digest(hcert + m)
 	w = r ^ e
 	wt = Integer(w)

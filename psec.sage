@@ -1,4 +1,15 @@
-def psec_encrypt(Q, m, P):
+# Algorithm 4.47 PSEC encryption
+# Require:
+#	generator point P of elliptic curve E
+#	order n of P and the field Zn defined by n
+# Input:
+#	message m
+#	public key Q
+# Output:
+#	Ciphertext (R,C,s,t).
+#
+
+def psec_encrypt(Q, m):
 	r = randint(1, n - 1)
 	l = ceil(math.log(n, 2)/8)
 	rstr = I2OSP(r, l)
@@ -24,7 +35,18 @@ def psec_encrypt(Q, m, P):
 	print t
 	return [R, C, s, t]
 
-def psec_decrypt(R, C, s, t, d, P):
+
+# Algorithm 4.48 ECIES decryption
+# Require:
+#	generator point P of elliptic curve E
+#	order n of P and the field Zn defined by n
+# Input:
+#	private key d
+#	ciphertext (R,C,s,t)
+# Output:
+#	Plaintext m or rejection of the ciphertext.
+#
+def psec_decrypt(R, C, s, t, d):
 	Z = d * R
 	l = ceil(math.log(n, 2)/8)
 	Rstr = point2str(R, l)

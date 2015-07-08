@@ -12,6 +12,7 @@
 #		private key d in [1, n-1]
 #
 def ec_keygen():
+	print "keygen"
 	d = randint(1, n - 1)
 	Q = d * P
 	return (Q, d)
