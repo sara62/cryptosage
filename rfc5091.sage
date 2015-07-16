@@ -2,7 +2,7 @@ import math
 
 # sage: load("rfc5091.sage")
 
-# RFC5091 7.1 
+# RFC5091 7.1
 # q = 0xfffffffffffffffffffffffffffbffff
 # p = 0xbffffffffffffffffffffffffffcffff3
 # E/F_p: y^2 = x^3 + 1
@@ -202,7 +202,7 @@ def EvalVertical1(B, A):
 #
 def EvalTangent1(B, A):
 	x_A, y_A = A[0], A[1]
-	if A == [0, 0]: return [1, 0]	
+	if A == [0, 0]: return [1, 0]
 
 #Algorithm 3.4.3
 
@@ -241,17 +241,17 @@ def TateMillerSolinas(A, B, s, a, b, c):
 		V2 = ProjectivePointDouble1(V)
 		V3 = [V2[0]/(V2[2] * V2[2]), V2[1]/(V2[2] * V2[2] * V2[2])]
 		t_den = t_den * EvalVertical1(B, V3)
-		
+
 	V_b =  [V[0]/(V[2] * V[2]), s * V[1]/(V[2] * V[2] * V[2])]
 	if(s == -1):
 		v_num = v_num * t_den
 		V1 = [V[0]/(V[2] * V[2]), V[1]/(V[2] * V[2] * V[2])]
 		v_den = v_den * EvalVertical1(B, V1)
-	
+
 	if(s == 1):
 		v_num = v_num * t_num
 		v_den = v_den * t_den
-	
+
 	for n in range(b, a-1):
 		t_num = t_num * t_num
 		t_den = t_den * t_den
@@ -260,7 +260,7 @@ def TateMillerSolinas(A, B, s, a, b, c):
 		V2 = ProjectivePointDouble1(V)
 		V3 = [V2[0]/(V2[2] * V2[2]), V2[1]/(V2[2] * V2[2] * V2[2])]
 		t_den = t_den * EvalVertical1(B, V3)
-		
+
 	V_a =  [V[0]/(V[2] * V[2]), s * V[1]/(V[2] * V[2] * V[2])]
 	v_num = v_num * t_num
 	v_den = v_den * t_den
@@ -268,9 +268,9 @@ def TateMillerSolinas(A, B, s, a, b, c):
 	v_den = v_den * EvalVertical1(B, V_a + V_b)
 	if(c == -1):
 		v_den = v_den * EvalVertical1(B, A)
-		
+
 	eta = (p*p - 1) / q
-	
+
 	return pow(v_num / v_den, eta)
 
 import hashlib
@@ -362,7 +362,7 @@ def HashToPoint1(E, p, q, id):
 
 #Algorihtm 4.5.1
 def Pairing(E, A, B):
-	return Pairing1(E, A, B);
+	return Pairing1(E, A, B)
 
 #Algorihtm 4.5.2
 def Pairing1(E, A, B):
@@ -393,4 +393,135 @@ def PairingRatio(E, A, B, C, D):
 def PairingRatio1(E, A, B, C, D):
 	return Pairing1(E, A, B) * Pairing(E, -C, D)
 
-Enter file contents here
+#Algorithm 5.1.1
+#Input:
+#o An integer version number
+#o A security parameter n (MUST take values either 1024, 2048, 3072,
+#7680, 15360)
+#Output:
+#o A set of public parameters (version, E, p, q, P, P_pub, hashfcn)
+#o A corresponding master secret s
+def BFsetup(ver, n):
+	if ver == 2:
+		return BFsetup1(n)
+
+#Algorithm 5.1.2
+#Input:
+#o A security parameter n (MUST take values either 1024, 2048, 3072,
+#7680, 15360)
+#Output:
+#o A set of public parameters (version, E, p, q, P, P_pub, hashfcn)
+#o A corresponding master secret s
+def BFsetup1(n):
+	version = 2
+	n_p = 0
+	n_q = 0
+	if n == 1024:
+		n_p = 512
+		n_q = 160
+		hashfcn = "sha1"
+	elif n == 2048:
+		n_p = 1024
+		n_q = 224
+		hashfcn = "sha224"
+	elif n == 3072:
+		n_p = 1536
+		n_q = 256
+		hashfcn = "sha256"
+	elif n == 7680:
+		n_p = 3840
+		n_q = 384
+		hashfcn = "sha384"
+	elif n == 15360:
+		n_p = 7680
+		n_q = 512
+		hashfcn = "sha512"
+	else:
+		print "Invalid input for n"
+		exit(0)
+	q = 2
+	r = 1
+	p = 12 * r * q - 1
+	F = FiniteField(p)
+	E = EllipticCurve(F, [0, 1])
+	PP = E.gens()
+	P = 12 * r * PP
+	s = randint(2, q-1)
+	P_pub = s * P
+	return [version, E, p, q, P, P_pub]
+
+#Algorithm 5.2.1 (BFderivePubl): derives the public key corresponding
+#   to an identity string.
+#Input:
+#   o  An identity string id
+#   o  A set of public parameters (version, E, p, q, P, P_pub, hashfcn)
+#Output:
+#   o  A point Q_id of order q in E(F_p) or E(F_p^2)
+def BFderivePub1(id, set):
+	[version, E, p, q, P, P_pub] = set
+	Q_id = HashToPoint(E, p, q, id)
+
+#Algorithm 5.3.1 (BFextractPriv): extracts the private key
+#   corresponding to an identity string.
+#Input:
+#   o  An identity string id
+#   o  A set of public parameters (version, E, p, q, P, P_pub, hashfcn)
+#Output:
+#   o  A point S_id of order q in E(F_p)
+def BFextractPriv(id, set):
+	[version, E, p, q, P, P_pub] = set
+	Q_id = HashToPoint(E, p, q, id)
+	S_id = s * Q_id
+
+#Algorithm 5.4.1 (BFencrypt): encrypts a random session key for an
+#   identity string.
+#Input:
+#   o  A plaintext string m of size |m| octets
+#   o  A recipient identity string id
+#   o  A set of public parameters (version, E, p, q, P, P_pub, hashfcn)
+#Output:
+#   o  A ciphertext tuple (U, V, W) in E(F_p) x {0, ... , 255}^hashlen x
+#      {0, ... , 255}^|m|
+def BFencrypt(m, id, set):
+	[version, E, p, q, P, P_pub] = set
+	hashlen = 20
+	Q_id = HashToPoint(E, p, q, id)
+	rho = ""
+	t = hashlib.sha1(m).hexdigest()
+	l = HashToRange(rho+t, q)
+	U = l * P
+	theta = Pairing(E, p, q, P_pub, Q_id)
+	theta_hat = theta ** l
+	z = Canonical(theta_hat, p, 0)
+	w = hashlib.sha1(z).hexdigest()
+	V = xor(w, rho)
+	w = HashBytes(len(m), rho)
+	W = xor(w, m)
+	return [U, V, W]
+
+#Algorithm 5.5.1 (BFdecrypt): decrypts an encrypted session key using
+#   a private key.
+#Input:
+#   o  A private key point S_id of order q in E(F_p)
+#   o  A ciphertext triple (U, V, W) in E(F_p) x {0, ... , 255}^hashlen x
+#      {0, ... , 255}*
+#   o  A set of public parameters (version, E, p, q, P, P_pub, hashfcn)
+#   Output:
+#   o  A decrypted plaintext m, or an invalid ciphertext flag
+def BFdecrypt(S_id, U, V, W, set)
+	[version, E, p, q, P, P_pub] = set
+	hashlen = 20
+	theta = Pairing(E, U, S_id)
+	z = Canonical(theta, p, 0)
+	w = hashlib.sha1(z).hexdigest()
+	rho = xor(w, V)
+	m = HashBytes(len(W), rho)
+	t = hashlib.sha1(m).hexdigest()
+	l = HashToRange(rho + t, q)
+	if U == l * P:
+		return m
+
+	return "Error"
+
+
+
