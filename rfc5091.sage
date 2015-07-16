@@ -446,9 +446,10 @@ def BFsetup1(n):
 	E = EllipticCurve(F, [0, 1])
 	PP = E.gens()
 	P = 12 * r * PP
-	s = randint(2, q-1)
+	s = randint(1, q-1)
 	P_pub = s * P
-	return [version, E, p, q, P, P_pub]
+	params = [version, E, p, q, P, P_pub]
+	return [params, s]
 
 #Algorithm 5.2.1 (BFderivePubl): derives the public key corresponding
 #   to an identity string.
@@ -468,7 +469,7 @@ def BFderivePub1(id, set):
 #   o  A set of public parameters (version, E, p, q, P, P_pub, hashfcn)
 #Output:
 #   o  A point S_id of order q in E(F_p)
-def BFextractPriv(id, set):
+def BFextractPriv(id, set, s):
 	[version, E, p, q, P, P_pub] = set
 	Q_id = HashToPoint(E, p, q, id)
 	S_id = s * Q_id
@@ -524,4 +525,162 @@ def BFdecrypt(S_id, U, V, W, set)
 	return "Error"
 
 
+#Algorithm 6.1.1
+#Input:
+#o An integer version number
+#o A security parameter n (MUST take values either 1024, 2048, 3072,
+#7680, 15360)
+#Output:
+#o A set of public parameters
+#o A corresponding master secret s
+def BBsetup(ver, n):
+	if ver == 2:
+		return BBsetup1(n)
 
+#Algorithm 6.1.2
+#Input:
+#o A security parameter n (MUST take values either 1024, 2048, 3072,
+#7680, 15360)
+#Output:
+#  A set of public parameters (version, k, E, p, q, P, P_1, P_2, P_3,
+#      v, hashfcn)
+#  A corresponding triple of master secrets (alpha, beta, gamma)
+def BBsetup1(n):
+	version = 2
+	n_p = 0
+	n_q = 0
+	if n == 1024:
+		n_p = 512
+		n_q = 160
+		hashfcn = "sha1"
+	elif n == 2048:
+		n_p = 1024
+		n_q = 224
+		hashfcn = "sha224"
+	elif n == 3072:
+		n_p = 1536
+		n_q = 256
+		hashfcn = "sha256"
+	elif n == 7680:
+		n_p = 3840
+		n_q = 384
+		hashfcn = "sha384"
+	elif n == 15360:
+		n_p = 7680
+		n_q = 512
+		hashfcn = "sha512"
+	else:
+		print "Invalid input for n"
+		exit(0)
+	q = 2
+	r = 1
+	p = 12 * r * q - 1
+	F = FiniteField(p)
+	E = EllipticCurve(F, [0, 1])
+	PP = E.gens()
+	P = 12 * r * PP
+	alpha = randint(1, q-1)
+	P_1 = alpha * P
+	beta = randint(1, q-1)
+	P_2 = beta * P
+	gamma = randint(1, q-1)
+	P_3 = gamma * P
+	v = Pairing(E, P_1, P_2)
+	s = [alpha, beta, gamma]
+	params = [version, E, p, q, P, P_1, P_2, P_3, v]
+	return [s, params]
+
+#Algorithm 6.2.1
+#Input:
+#   o  An identity string id
+#   o  A set of common public parameters (version, k, E, p, q, P, P_1,
+#      P_2, P_3, v, hashfcn)
+#Output:
+#   o  An integer h_id modulo q
+def BBderivePubl(id, params):
+	[version, E, p, q, P, P_1, P_2, P_3, v] = params
+	h_id = HashToRange(id, q)
+
+#Algorithm 6.3.1
+#Input:
+#   o  An identity string id
+#   o  A set of public parameters (version, k, E, p, q, P, P_1, P_2, P_3,
+#      v, hashfcn)
+#   Output:
+#   o  A pair of points (D_0, D_1), each of which has order q in E(F_p)
+def BBextractPriv(id, params, s):
+	[version, E, p, q, P, P_1, P_2, P_3, v] = params
+	[alpha, beta, gamma] = s
+	r = randint(1, q-1)
+	hid = HashToRange(id, q)
+	y = alpha * beta + r * (alpha * hid + gamma)
+	D_0 = y * P
+	D_1 = r * P
+	prikey = [D_0, D_1]
+
+#Algorithm 6.4.1 (BBencrypt): encrypts a session key for an identity
+#   string.
+#   Input:
+#   o  A plaintext string m of size |m| octets
+#   o  A recipient identity string id
+#   o  A set of public parameters (version, k, E, p, q, P, P_1, P_2, P_3,
+#      v, hashfcn)
+#Output:
+#   o  A ciphertext tuple (u, C_0, C_1, y) in F_q x E(F_p) x E(F_p) x
+#      {0, ... , 255}^|m|
+def BBencrypt(m, id, params):
+	[version, E, p, q, P, P_1, P_2, P_3, v] = params
+	s = randint(1, q-1)
+	w = v**s
+	C_0 = s * P
+	hid = HashToRange(id, q)
+	y = s * hid
+	C_1 = y * P_1 + s * P_3
+	psi = Canonical(w, p, 1)
+	l = math.ceil(math.log(p, 2)/8)
+	zeta = hashlib.sha1(psi).hexdigest()
+	xi = hashlib.sha1(zeta + psi).hexdigest()
+	hh = xi + zeta
+	y = HashBytes(len(m), hh)
+	x_0, y_0 = C_0[0], C_0[1]
+	x_1, y_1 = C_1[0], C_1[1]
+	sigma = str(y_1) + str(x_1) + str(y_0) + str(x_0) + y + psi
+	eta = hashlib.sha1(sigma).hexdigest()
+	mu = hashlib.sha1(eta + sigma).hexdigest()
+	h2 = mu + eta
+	rho = HashToRange(h2, q)
+	u = (s + rho) % q
+	return [u, C_0, C_1, y]
+
+#Algorithm 6.5.1 (BBdecrypt): decrypts a ciphertext using public
+#   parameters and a private key.
+#Input:
+#   o  A private key given as a pair of points (D_0, D_1) of order q in
+#      E(F_p)
+#   o  A ciphertext quadruple (u, C_0, C_1, y) in Z_q x E(F_p) x E(F_p) x
+#      {0, ... , 255}*
+#   o  A set of public parameters (version, k, E, p, q, P, P_1, P_2, P_3,
+#      v, hashfcn)
+#   Output:
+#   o  A decrypted plaintext m, or an invalid ciphertext flag
+def BBdecrypt(prikey, ctx, params)
+	[D_0, D_1] = prikey
+	[u, C_0, C_1, y] = ctx
+	[version, E, p, q, P, P_1, P_2, P_3, v] = params
+	w = PairingRatio(E, C_0, D_0, C_1, D_1)
+	psi = Canonical(w, p, 1)
+	l = math.ceil(math.log(p, 2)/8)
+	zeta = hashlib.sha1(psi).hexdigest()
+	xi = hashlib.sha1(zeta + psi).hexdigest()
+	hh = xi + zeta
+	m = HashBytes(len(y), hh)
+	x_0, y_0 = C_0[0], C_0[1]
+	x_1, y_1 = C_1[0], C_1[1]
+	sigma = str(y_1) + str(x_1) + str(y_0) + str(x_0) + y + psi
+	eta = hashlib.sha1(sigma).hexdigest()
+	mu = hashlib.sha1(eta + sigma).hexdigest()
+	h2 = mu + eta
+	rho = HashToRange(h2, q)
+	s = (u - rho) % q
+	if w == v**s and C_0 == s *P:
+		return m
