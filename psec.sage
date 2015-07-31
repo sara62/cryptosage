@@ -76,3 +76,4 @@ def psec_decrypt(R, C, s, t, d):
 	aesobj = AES.new(k1)
 	m = aesobj.decrypt(C)
 	return m
+

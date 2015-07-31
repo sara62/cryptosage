@@ -21,7 +21,7 @@ K.<a> = GF(p^2, name='a', modulus=x^2 + 1)
 
 # point at infinity
 O = [0, 0]
-
+#use sha1 encrypt by default
 
 # Algorithm 3.1.1 (PointDouble1)
 # Input:
@@ -74,7 +74,6 @@ def PointAdd1(A, B):
 #
 def SignedWindowDecomposition(k, r):
 	d = 0
-	j = 0
 	mask = 1
 	l = math.log(k, 2)
 	ki = []
@@ -139,6 +138,17 @@ def PointMultiply(l, A):
 
 	return Q
 
+def check_point_mul():
+	q = 0xfffffffffffffffffffffffffffbffff
+	p = 0xbffffffffffffffffffffffffffcffff3
+	F = FiniteField(p)
+	E = EllipticCurve(F, [0, 1])
+	A = E((0x489a03c58dcf7fcfc97e99ffef0bb4634,0x510c6972d795ec0c2b081b81de767f808))
+	l = 0xb8bbbc0089098f2769b32373ade8f0daf
+	A = PointMultiply(l, A)
+	(x, y) = A.xy()
+	print x
+	print y
 
 # Algorithm 3.3.1 (ProjectivePointDouble1)
 # Input:
@@ -202,7 +212,8 @@ def EvalVertical1(B, A):
 #
 def EvalTangent1(B, A):
 	x_A, y_A = A[0], A[1]
-	if A == [0, 0]: return [1, 0]
+	if A == [0, 0]:
+		return [1, 0]
 
 #Algorithm 3.4.3
 
@@ -412,33 +423,9 @@ def BFsetup(ver, n):
 #Output:
 #o A set of public parameters (version, E, p, q, P, P_pub, hashfcn)
 #o A corresponding master secret s
+
 def BFsetup1(n):
 	version = 2
-	n_p = 0
-	n_q = 0
-	if n == 1024:
-		n_p = 512
-		n_q = 160
-		hashfcn = "sha1"
-	elif n == 2048:
-		n_p = 1024
-		n_q = 224
-		hashfcn = "sha224"
-	elif n == 3072:
-		n_p = 1536
-		n_q = 256
-		hashfcn = "sha256"
-	elif n == 7680:
-		n_p = 3840
-		n_q = 384
-		hashfcn = "sha384"
-	elif n == 15360:
-		n_p = 7680
-		n_q = 512
-		hashfcn = "sha512"
-	else:
-		print "Invalid input for n"
-		exit(0)
 	q = 2
 	r = 1
 	p = 12 * r * q - 1
@@ -509,7 +496,7 @@ def BFencrypt(m, id, set):
 #   o  A set of public parameters (version, E, p, q, P, P_pub, hashfcn)
 #   Output:
 #   o  A decrypted plaintext m, or an invalid ciphertext flag
-def BFdecrypt(S_id, U, V, W, set)
+def BFdecrypt(S_id, U, V, W, set):
 	[version, E, p, q, P, P_pub] = set
 	hashlen = 20
 	theta = Pairing(E, U, S_id)
@@ -547,6 +534,7 @@ def BBsetup(ver, n):
 #  A corresponding triple of master secrets (alpha, beta, gamma)
 def BBsetup1(n):
 	version = 2
+	"""
 	n_p = 0
 	n_q = 0
 	if n == 1024:
@@ -572,6 +560,7 @@ def BBsetup1(n):
 	else:
 		print "Invalid input for n"
 		exit(0)
+	"""
 	q = 2
 	r = 1
 	p = 12 * r * q - 1
@@ -684,3 +673,7 @@ def BBdecrypt(prikey, ctx, params)
 	s = (u - rho) % q
 	if w == v**s and C_0 == s *P:
 		return m
+
+def xor(a, b):
+	return ((a|b)-(a&b))
+
